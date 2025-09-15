@@ -9,4 +9,83 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## 
+## 1. Set Up
+
+```{r}
+library(pacman)
+
+p_load(tidyverse, sf, spData)
+
+```
+
+
+## 2. Data
+
+```{r}
+
+data("world")
+data("worldbank_df")
+
+```
+
+
+## 3. Assignment
+
+### 3.1 Examine the data
+
+```{r}
+glimpse(world)
+
+class(world)
+
+glimpse(worldbank_df)
+
+class(worldbank_df)
+
+```
+
+> world has multipolygon data and two different subclasses of dataframes. worldbank doesn't have any spatial data.
+
+Combine dataframes
+
+```{r}
+
+worldwide <- left_join(world, worldbank_df, by = c("iso_a2"))
+
+glimpse(worldwide)
+
+```
+
+> The resulting dataframe looks reasonable to me. All the data I expected to be there is.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
