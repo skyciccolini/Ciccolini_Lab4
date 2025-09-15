@@ -127,6 +127,158 @@ plot(st_geometry(us_states))
 ```
 
 
+Summarizing
+
+```{r}
+# total pop by region in 2015
+sum <- us_states |> 
+  group_by(REGION) |> 
+  summarise(TotalPop = sum(total_pop_15))
+
+ggplot() +
+  geom_sf(data = sum, aes(fill =TotalPop))
+```
+
+
+## Actual Data
+
+```{r}
+
+library(tigris) ## pulls in official boundaries from census data
+
+# read in MO county data
+counties <- counties(state = "KS")
+
+class(counties)
+
+glimpse(counties)
+
+# plot
+plot(counties[ ,1])
+
+ggplot() +
+  geom_sf(data = counties)
+
+# check crs
+st_crs(counties)
+
+```
+
+
+### Lets merge things
+
+```{r}
+# read in some data
+bea <- read_csv("Data/KS_BEA.csv")
+
+
+
+```
+
+
+## Tidy the data (from Week3)
+
+```{r}
+bea_clean <- bea |> 
+  filter(GeoFIPS != "Note: See the included footnote file." | 
+           GeoFIPS != "CAGDP2: Gross domestic product (GDP) by county and metropolitan area 1/" |
+           GeoFIPS != "Last updated: December 9, 2020 -- new statistics for 2019, revised statistics for 2001-2018." |
+           GeoFIPS != "Source: U.S. Department of Commerce / Bureau of Economic Analysis / Regional Economic Accounts") 
+
+bea_tidy <- bea_clean |> 
+  pivot_longer(cols = 9:27,
+                        names_to = "Year",
+                        values_to = "Value")
+
+
+bea_tidier <- bea_tidy |> 
+  pivot_wider(names_from = Description,
+              values_from = Value)
+
+
+## need to add a line so that it recognizes that there is a unique combo of location and year
+
+## need to do this when your dataset has a lot of built in redundancies
+
+bea_tidier <- bea_tidy |> 
+  pivot_wider(id_cols = c("GeoFIPS", "Year"), ## list of unique cols
+              names_from = Description,
+              values_from = Value)
+
+# check for NAs
+colSums(is.na(bea_tidier)) ## YAY! no NAs here
+
+## Welp, this doesn't work
+
+#bea_clean <- bea_tidier |> 
+  #mutate_at(., 
+            #vars = ("Year":'Private services-providing industries 3/',
+            #~as.numeric()))
+
+bea_clean <- bea_tidier |> 
+  mutate(across(Year:`Private services-providing industries 3/`,
+         ~as.numeric(.)))
+
+
+glimpse(bea_clean)
+```
+
+Clean the GEOFIPS
+
+```{r}
+
+bea_cleaner <- bea_clean |> 
+  mutate(GEOID = str_extract(GeoFIPS, "\\d+")) ## str_extract removes parts of string from each value
+
+bea_cleaner$GEOID
+
+```
+
+
+## Join Data
+
+```{r}
+
+bea_sf <- left_join(counties, bea_cleaner, 
+                    by = c("GEOID")) ## left side should be spatial data, right side is attributes
+
+glimpse(bea_sf)
+
+class(bea_sf)
+
+```
+
+
+### Plotting
+
+```{r}
+
+ggplot() +
+  geom_sf(data = bea_sf, aes(fill = `All industry total`))
+
+
+# normalize data so you aren't just showing the pop effects
+ggplot() +
+  geom_sf(data = bea_sf, aes(fill = log(`All industry total`, 10)))
+
+# one year only instead of all of the years
+ggplot() +
+  geom_sf(data = bea_sf |> 
+            filter(Year == 2001), aes(fill = log(`All industry total`, 10)))
+
+# show all the years but broken apart into different plots
+ggplot() +
+  geom_sf(data = bea_sf, aes(fill = log(`All industry total`, 10))) +
+  facet_wrap(~Year)
+
+
+
+```
+
+
+
+
+
 
 
 
