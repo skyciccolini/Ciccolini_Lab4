@@ -1,0 +1,81 @@
+---
+title: "Week4"
+author: "Skylar Ciccolini"
+date: "2025-09-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Pre-class
+
+```{r}
+# try and make a plot
+
+# Set up
+library(tidyverse)
+
+ag <- read_csv("Data/agronomic_yields.csv")
+
+
+
+ggplot() +
+  geom_smooth(data = ag, aes(x = Year, y = Yield_kg_ha,
+                             color = Crop, fill = Crop)) +
+  labs(x = "Date", y = "Yield (kg/ha)") +
+theme(axis.text.x = element_text(angle = 90)) +
+  scale_color_brewer(palette = "YlGrBu") +
+  scale_fill_brewer(palette = "YlGrBu")
+
+
+# factor stuff
+
+library(gapminder)
+
+data("gapminder")
+
+gapminder$country
+
+levels(gapminder$country) ## check levels of factor
+
+countries <- as.character(gapminder$country) ## convert to character to alphabetize
+
+## going from factor to number will just convert factor levels to numbers 1,2,3 etc, 
+## not whatever the factor value is
+
+## go from factor -> character -> numeric
+as.numeric(as.character(gapminder$country))
+
+# fcns for dealing with factors
+levels()
+reorder()
+fct_reorder()
+fct_relevel()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
