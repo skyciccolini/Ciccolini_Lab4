@@ -59,8 +59,64 @@ glimpse(worldwide)
 > The resulting dataframe looks reasonable to me. All the data I expected to be there is.
 
 
+### 3.2 Make some basic (non-spatial) plots to explore differences in urban population and literacy across countries.
+
+```{r}
+
+ggplot() +
+  geom_point(data = worldwide, aes(x = iso_a2, y = urban_pop))
+
+ggplot() +
+  geom_point(data = worldwide, aes(x = iso_a2, y = literacy))
+
+```
 
 
+### 3.3 Now make some basic maps to explore urban population and literacy across countries.
+
+```{r}
+
+ggplot() +
+  geom_sf(data = worldwide, aes(fill = urban_pop))
+
+ggplot() +
+  geom_sf(data = worldwide, aes(fill = literacy)) ### this seems hinky...
+
+```
+
+
+
+### 3.4 Make some basic (non-spatial) plots to explore differences in urban population and literacy across continents.
+
+```{r}
+
+ggplot() +
+  geom_point(data = worldwide, aes(x = continent, y = urban_pop))
+
+ggplot() +
+  geom_point(data = worldwide, aes(x = continent, y = literacy))
+
+```
+
+
+
+### 3.5 Now make some basic maps to explore differences in urban population and literacy across continents.
+Change to a different, projected coordinate system for these maps.
+
+```{r}
+
+# change the PCS to Equal earth
+
+worldwide_proj <- st_transform(worldwide, "+proj=eqearth +lon_0=0 +datum=WGS84 +units=m +no_defs
+")
+
+# now, to plot
+ggplot() +
+  geom_sf(data = worldwide_proj, aes(fill = urban_pop))
+
+ggplot() +
+  geom_sf(data = worldwide_proj, aes(fill = literacy)) ### this seems hinky...
+```
 
 
 
