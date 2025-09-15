@@ -57,11 +57,74 @@ fct_relevel()
 ```
 
 
+## Spatial Data
+
+### sp
+
+```{r}
+
+library(spData)
+library(sp)
+
+
+data("elect80")
+
+glimpse(elect80)
+
+class(elect80)
+
+# can index directly into the variables w/o going through the data slot
+elect80$FIPS
+
+
+```
+
+Some Plotting
+
+```{r}
+
+#points of coord points in df
+sp::plot(elect80, pch = 20, cex = 0.5, col = "pink")
+
+# what is the CRS?
+elect80@proj4string
+
+
+```
 
 
 
+### sf
+
+```{r}
+
+library(sf)
+
+data("us_states")
+
+class(us_states)
+
+glimpse(us_states)
+
+# whats the CRS?
+st_crs(us_states)
+
+```
+
+Some Plotting
+
+```{r}
+
+plot(us_states[ ,1]) ## just plot the first col
+
+plot(us_states) ## plot all cols
+
+# plot the boundaries
+plot(st_geometry(us_states))
 
 
+
+```
 
 
 
